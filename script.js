@@ -1,4 +1,52 @@
+const btns = document.querySelectorAll('.btn')
+const div = document.createElement('div')
+const pYou = document.createElement('p');
+const pComp = document.createElement('p');
+const res = document.createElement('h2');
+const again = document.createElement('button')
+const vs = document.createElement('h3')
 
+again.textContent = 'Play Again'
+div.style.cssText = "height: 200px; width: 200px; border: 4px solid black;"
+div.setAttribute("align", "center")
+
+document.body.appendChild(vs)
+div.appendChild(pYou)
+div.appendChild(pComp)
+div.appendChild(res)
+document.body.appendChild(div)
+
+
+const playAgain = () => {
+    div.appendChild(again);
+    again.addEventListener('click', () =>{
+        location.reload()
+    })
+}
+
+const display = (meScore,cScore,yourChoice,CompChoice) =>{
+    
+    vs.textContent = `${yourChoice} VS ${CompChoice}`
+    pYou.textContent = `Your Score: ${meScore} \n `;
+    pComp.textContent = `Computer's score: ${cScore}`;
+    if(meScore == 5){
+        btns.forEach(button => {
+            button.style.visibility = 'hidden';
+        });
+        vs.style.visibility = 'hidden'
+        res.textContent = 'You Win'
+        playAgain()
+    }
+    else if(cScore == 5){
+        btns.forEach(button => {
+            button.style.visibility = 'hidden';
+        });
+        vs.style.visibility = 'hidden'
+        res.textContent = 'Computer Wins'
+        playAgain()
+    }
+    
+}
 
 function getComputerChoice(){
     const max = Math.floor(3);
@@ -14,13 +62,21 @@ function getComputerChoice(){
     }
 }
 
- 
+const getPlayerChoice = () => {
+    btns.forEach(button => {
+        button.addEventListener('click', () => {
+            let [meScore, cScore,computerChoice] = game(button.id)
+            display(meScore,cScore,button.id,computerChoice)
+        })
+    });
+}
+
 
 function play(userInput,computerChoice){
-    if(userInput == computerChoice.toLowerCase()){
+    if(userInput == computerChoice){
         return "Draw"
     }
-    else if (userInput == "rock"){
+    else if (userInput == "Rock"){
         if(computerChoice == "Paper"){
             return computerChoice
         }
@@ -28,7 +84,7 @@ function play(userInput,computerChoice){
             return userInput
         }
     }
-    else if (userInput == "paper"){
+    else if (userInput == "Paper"){
         if(computerChoice == "Scissors"){
             return computerChoice
         }
@@ -47,37 +103,22 @@ function play(userInput,computerChoice){
 }
 
 
-function game(){
-    let yourScore = 0
-    let compScore = 0
+let yourScore = 0
+let compScore = 0
 
-    for( i = 0; i<5;i++){
-        let userInput = prompt("Play Rock,Paper,Scissors!").toLowerCase()
-        let computerChoice = getComputerChoice()
-        let result = play(userInput,computerChoice)
-        if(result == "Draw"){
-            console.log("Draw!")
-        }
-        else if(result == userInput){
-            console.log(`You Win! ${userInput} beats ${computerChoice}`)
-            yourScore++
-        }
-        else{
-            console.log(`You Lose! ${computerChoice} beats ${userInput}`)
-            compScore++
-        }
-        console.log(`Result     ${yourScore}:${compScore}`)
-    }
+const game =  (userInput) => {
+
+    let computerChoice = getComputerChoice()
+    let result = play(userInput,computerChoice)
     
-    if(yourScore > compScore){
-        console.log(`You won     ${yourScore}:${compScore}`)
+    if(result == userInput){
+        yourScore++
     }
-    else if (compScore > yourScore){
-        console.log(`You lost     ${yourScore}:${compScore}`)
+    else if (result == computerChoice){ 
+        compScore++
     }
-    else{
-        console.log(`Draw     ${yourScore}:${compScore}`)
-    }
+
+    return [yourScore,compScore,computerChoice]
 }
 
-game()
+getPlayerChoice()
